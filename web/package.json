@@ -1,0 +1,29 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@nuxtjs/axios": "^5.12.5",
+    "@nuxtjs/toast": "^3.3.1",
+    "core-js": "^3.8.3",
+    "nuxt": "2.15.8",
+    "vue-sweetalert2": "^5.0.5"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@nuxtjs/vuetify": "^1.11.3"
+  },
+  "resolutions": {
+    "node-releases": "1.1.77",
+    "vue": "2.7.14",
+    "vue-template-compiler": "2.7.14",
+    "vue-server-renderer": "2.7.14"
+  }
+}

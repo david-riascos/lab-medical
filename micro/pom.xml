@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.co.entrenamiento</groupId>
+    <artifactId>micro</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+
+    <name>micro</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <version.jakartaee>8.0.0</version.jakartaee>
+        <version.payara>5.201</version.payara>
+        <!-- Payara Micro 5.201 ya trae H2 1.4.196 y esa es la que gana en tiempo de ejecucion; se declara la misma version para no confundirse -->
+        <version.h2>1.4.196</version.h2>
+    </properties>
+
+    <dependencies>
+        <!-- API de Jakarta EE 8: la provee Payara Micro en tiempo de ejecucion (igual que en el micro real) -->
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-web-api</artifactId>
+            <version>${version.jakartaee}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Base de datos embebida (el micro real usa Oracle/ojdbc8). La provee Payara Micro, por eso "provided". -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${version.h2}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- mvn payara-micro:start  -> levanta el .war en Payara Micro 5.201 (puerto 8081, para no chocar con el 8080 del proyecto real) -->
+            <plugin>
+                <groupId>fish.payara.maven.plugins</groupId>
+                <artifactId>payara-micro-maven-plugin</artifactId>
+                <version>1.0.7</version>
+                <configuration>
+                    <payaraVersion>${version.payara}</payaraVersion>
+                    <deployWar>true</deployWar>
+                    <commandLineOptions>
+                        <option>
+                            <key>--port</key>
+                            <value>8081</value>
+                        </option>
+                        <option>
+                            <key>--noCluster</key>
+                        </option>
+                        <option>
+                            <key>--contextroot</key>
+                            <value>ROOT</value>
+                        </option>
+                    </commandLineOptions>
+                    <javaCommandLineOptions>
+                        <option>
+                            <key>-DDB_URL</key>
+                            <!-- En memoria: se borra al apagar. Mas adelante se puede pasar a archivo: jdbc:h2:file:./data/entrenamiento -->
+                            <value>jdbc:h2:mem:entrenamiento;DB_CLOSE_DELAY=-1</value>
+                        </option>
+                        <option>
+                            <key>-DDB_USER</key>
+                            <value>sa</value>
+                        </option>
+                    </javaCommandLineOptions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,17 @@
+# Editor / IDE
+.vscode/
+.idea/
+*.iml
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
+
+# Logs y variables de entorno (por si algún stack futuro las usa en la raíz)
+*.log
+.env
+.env.*
+!.env.example
+
+# Nota: node_modules/, .nuxt/, dist/, target/ y data/ ya están cubiertos
+# por los .gitignore de micro/ y web/.
