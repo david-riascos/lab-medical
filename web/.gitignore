@@ -1,5 +1,17 @@
+# Dependencias y build
 node_modules/
 .nuxt/
 dist/
+.cache/
+
+# Variables de entorno
 .env
+.env.local
+
+# Logs
 *.log
+yarn-error.log
+npm-debug.log*
+
+# Yarn
+.yarn-integrity

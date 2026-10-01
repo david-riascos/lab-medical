@@ -1,4 +1,16 @@
+# Maven
 target/
-data/
+*.class
+
+# Eclipse / IntelliJ
 *.iml
 .idea/
+.classpath
+.project
+.settings/
+
+# Datos locales y logs (H2, por si deja de ser en memoria)
+data/
+*.log
+*.mv.db
+*.trace.db
