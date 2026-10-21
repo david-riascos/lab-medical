@@ -160,7 +160,7 @@ Plan de entrenamiento de 6 meses (90 min/día), construido lunes/miércoles/vier
 
 | Mes | Funcionalidad |
 |---|---|
-| 1 | Login y permisos/usuarios (tabla `USUARIOS`, `login()`, pantalla con `v-form` y `:rules`) |
+| 1 | Login y permisos/usuarios (tabla `USUARIOS`, `login()`, pantalla con `v-form` y `:rules`) — **login básico listo** |
 | 2 | Historia clínica mínima |
 | 3 | Banco de sangre mini |
 | 4 | RIPS mini |
@@ -171,5 +171,8 @@ Plan de entrenamiento de 6 meses (90 min/día), construido lunes/miércoles/vier
 
 - Backend y frontend creados, compilando y sirviendo página; **pendiente** el clic real end-to-end del botón
   "Probar backend" contra el backend Java.
+- **Login básico verificado con clic real** (2026-10-21): tabla `USUARIOS` (se crea y se siembra sola al arrancar,
+  usuario ficticio `admin` / `admin123`), `POST /api/login` y pantalla `login.vue` con `v-form`/`:rules`. Sin manejo de
+  sesión todavía.
 - Sin pruebas automáticas todavía en ninguno de los dos lados.
-- **Siguiente paso:** login básico — mes 1 de la hoja de ruta.
+- **Siguiente paso:** mes 1 continúa con permisos/usuarios (roles, no solo login).

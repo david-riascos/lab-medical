@@ -39,11 +39,16 @@ Se lee en `nuxt.config.js` → `axios.baseURL`.
 | Archivo | Qué es |
 |---|---|
 | `nuxt.config.js` | Puerto 3001, SPA, router hash, módulos, tema (`primary #132980`, `accent #FF4F0D`) y `axios.baseURL` |
-| `layouts/default.vue` | Barra superior y contenedor |
+| `layouts/default.vue` | Barra superior con navegación (`Ping` / `Login`) y contenedor |
 | `pages/index.vue` | Botón **"Probar backend"**: llama a `GET api/ping` y muestra el resultado en un `v-alert` y un `toast` |
+| `pages/login.vue` | `v-form` con `:rules` (usuario/clave obligatorios) que llama a `POST api/login` |
 
 Si el backend responde con error, la pantalla muestra el campo `RESPUESTA` que venga en el cuerpo (mismo patrón que el proyecto real);
 si no hay respuesta, avisa que revises el micro en el 8081.
+
+En `login.vue`, las `:rules` solo validan en el navegador (campos no vacíos); el backend vuelve a validar todo — nunca se
+confía solo en la validación de cliente. Pendiente de una semana siguiente del plan: guardar la sesión tras un login
+exitoso (por ahora solo muestra el toast de bienvenida).
 
 ## Trampas ya resueltas (no repetir)
 
@@ -54,5 +59,7 @@ si no hay respuesta, avisa que revises el micro en el 8081.
 ## Estado de verificación
 
 - Compila y sirve la página (verificado al crear el proyecto).
-- **Pendiente:** clic real en "Probar backend" desde un navegador contra el backend Java (no se ha hecho).
+- **Login verificado con clic real** (Chrome + `puppeteer-core`, 2026-10-21): bloqueo de campos vacíos, rechazo de
+  credenciales incorrectas y bienvenida con credenciales correctas, los tres contra el backend Java real.
+- **Pendiente:** clic real en "Probar backend" (`index.vue`) desde un navegador contra el backend Java.
 - No tiene pruebas automáticas ni `lint` configurado.

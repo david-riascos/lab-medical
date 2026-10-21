@@ -62,4 +62,17 @@ public final class DBPool {
             }
         }
     }
+
+    /**
+     * Ejecuta DDL (CREATE TABLE...) o DML (INSERT/UPDATE/MERGE) con parametros.
+     * No se usa para SELECT: para eso esta {@link #consultar}.
+     */
+    public static void ejecutar(final String sql, final Object... parametros) throws SQLException {
+        try (Connection conn = abrir(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 0; i < parametros.length; i++) {
+                ps.setObject(i + 1, parametros[i]);
+            }
+            ps.executeUpdate();
+        }
+    }
 }

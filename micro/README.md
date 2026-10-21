@@ -26,14 +26,18 @@ mvn package                   # solo compilar y empaquetar el war
 - **La primera vez tarda ~45 s.** El puerto abre unos ~12 s **antes** de que el war termine de desplegarse: si `/api/ping` da 404, espera y reintenta.
 - Si queda colgado, busca quién escucha en el 8081 y cierra solo ese proceso.
 
-## Endpoint
+## Endpoints
 
 | Método y ruta | Respuesta |
 |---|---|
 | `GET /api/ping` | `200` `{"RESPUESTA":"pong","ESTADO":1,"BASEDEDATOS":"H2 1.4.196 …"}` |
 | (si la BD falla) | `400` `{"RESPUESTA":"No se pudo consultar la base de datos","ESTADO":0}` — sin detalles internos |
+| `POST /api/login` `{"usuario","clave"}` | `200` `{"RESPUESTA":"Bienvenido, ...","ESTADO":1,"USUARIO":{"ID","USUARIO","NOMBRE"}}` |
+| (usuario/clave vacíos, incorrectos o inactivo) | `400` `{"RESPUESTA":"...","ESTADO":0}` — mensaje genérico en credenciales (no dice cuál de las dos falla) |
 
-Contrato: `ESTADO > 0` es éxito; `ESTADO 0` se devuelve como HTTP 400.
+Contrato: `ESTADO > 0` es éxito; `ESTADO 0` se devuelve como HTTP 400. El login nunca devuelve `CLAVE`, ni en éxito ni en error.
+
+Usuario ficticio de prueba (sembrado al arrancar, ver `EsquemaInicial`): `admin` / `admin123`.
 
 ## Configuración (propiedades `-D`)
 
@@ -52,17 +56,25 @@ Contrato: `ESTADO > 0` es éxito; `ESTADO 0` se devuelve como HTTP 400.
 |---|---|---|
 | `configuration` | `ApplicationInit` | Activa JAX-RS bajo `/api` |
 | `configuration` | `CORSFilter` | Cabeceras CORS con un solo origen configurable |
+| `configuration` | `EsquemaInicial` | `@WebListener`: crea la tabla `USUARIOS` y siembra el usuario ficticio al arrancar (la BD es en memoria) |
 | `endpoints` | `PingEndpoint` | Solo traduce HTTP (200 / 400); **no** tiene lógica |
+| `endpoints` | `LoginEndpoint` | `POST /api/login`; solo traduce HTTP |
 | `services` | `PingService` | Lógica y SQL de la prueba de vida |
-| `core` | `DBPool` | Único acceso a la BD (`consultar(sql, parámetros…)` → `JsonArray`) |
+| `services` | `LoginService` | Lógica y SQL del login (usuario/clave, activo) |
+| `core` | `DBPool` | Único acceso a la BD: `consultar(sql, parámetros…)` → `JsonArray`; `ejecutar(sql, parámetros…)` para DDL/DML |
+| `core` | `Claves` | Hash de contraseñas (SHA-256, sin librería nueva); nunca se guarda ni compara en texto plano |
 
 ## Estado de verificación
 
 - Compila y responde `GET /api/ping` (verificado al crear el proyecto).
-- **No tiene pruebas automáticas todavía.**
-- **Pendiente:** la prueba con clic real desde el navegador (el botón "Probar backend" del frontend). Hasta ahora backend y frontend se comprobaron cada uno por separado y el CORS con una petición `curl` que simula el origen del frontend.
+- **Login verificado con clic real** (Chrome + `puppeteer-core`, 2026-10-21): campos vacíos bloqueados por el cliente,
+  credenciales incorrectas rechazadas (`400`, mensaje genérico), credenciales correctas (`admin` / `admin123`) devuelven
+  `200` con el mensaje de bienvenida.
+- **No tiene pruebas automáticas todavía** (ni unitarias ni de integración).
 
 ## Limitaciones conocidas
 
 - `DBPool` es una versión mínima: sin pool de conexiones ni transacciones (se irá ampliando en las semanas del plan).
-- La BD en memoria se pierde al apagar; no hay migraciones ni tablas todavía (la tabla `USUARIOS` es de la semana 1).
+- La BD en memoria se pierde al apagar; `EsquemaInicial` recrea la tabla `USUARIOS` y el usuario ficticio en cada arranque.
+- El login no guarda sesión (ni token ni cookie): valida y devuelve el usuario, pero cada pantalla nueva tendrá que
+  pedir sesión otra vez hasta que se agregue en una semana siguiente del plan.
